@@ -40,9 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultUnitOfWorkFactory.cs" />
     <Compile Include="Disposable.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitOfWorkFactory.cs" />
     <Compile Include="UnitOfWorkScope.cs" />
     <Compile Include="UnitOfWorkScopeMode.cs" />
   </ItemGroup>

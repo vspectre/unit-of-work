@@ -1,44 +1,54 @@
 ﻿using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.Xunit2;
 using System;
 using Xunit;
+using NSubstitute;
+using System.Linq;
 
 namespace UnitOfWork.UnitTests
 {
     public class UnitOfWorkScopeTests
     {
         [Theory, AutoDomainData]
-        public void UoWScopeIsDisposable(UnitOfWorkScope<TestUnitOfWork> sut)
+        public void UoWScopeIsDisposable(UnitOfWorkScope<IUnitOfWork> sut)
         {
             Assert.IsAssignableFrom<IDisposable>(sut);
         }
 
-        [Fact]
-        public void WritingRootScopeCommitOnce()
+        [Theory, AutoDomainData]
+        public void WritingRootScopeCommitOnce([Frozen]IUnitOfWork uow, UnitOfWorkScope<IUnitOfWork> sut)
         {
-            using (var sut = new UnitOfWorkScope<TestUnitOfWork>(UnitOfWorkScopeMode.Writing))
-            {
-                sut.Commit();
-                Assert.Equal(1, sut.UnitOfWork.CommitCount);
-            }
+            sut.Commit();
+            uow.Received(1).Commit();
         }
 
-        [Fact]
-        public void ReadingScopeCommitThrows()
+        [Theory, AutoDomainData]
+        public void ReadingScopeCommitThrows(Fixture fixture)
         {
-            using (var sut = new UnitOfWorkScope<TestUnitOfWork>(UnitOfWorkScopeMode.Reading))
-            {
+            fixture.Inject(UnitOfWorkScopeMode.Reading);
+            using (var sut = fixture.Create<UnitOfWorkScope<IUnitOfWork>>())
                 Assert.Throws<InvalidOperationException>(() => sut.Commit());
+        }
+
+        [Theory, AutoDomainData]
+        public void WritingChildScopeCommitZero([Frozen]IUnitOfWork uow, Fixture fixture)
+        {
+            fixture.Inject(UnitOfWorkScopeMode.Writing);
+            using (var root = fixture.Create<UnitOfWorkScope<IUnitOfWork>>())
+            using (var sut = fixture.Create<UnitOfWorkScope<IUnitOfWork>>())
+            {
+                sut.Commit();
             }
+
+            uow.DidNotReceive().Commit();
         }
 
         [Fact]
-        public void WritingChildScopeCommitZero()
+        public void WritingChildReadingRootScopeThrows()
         {
-            using (var root = new UnitOfWorkScope<TestUnitOfWork>(UnitOfWorkScopeMode.Writing))
-            using (var sut = new UnitOfWorkScope<TestUnitOfWork>(UnitOfWorkScopeMode.Writing))
+            using (var root = new UnitOfWorkScope<IUnitOfWork>(UnitOfWorkScopeMode.Reading))
             {
-                sut.Commit();
-                Assert.Equal(0, sut.UnitOfWork.CommitCount);
+                Assert.Throws<InvalidOperationException>(() => new UnitOfWorkScope<IUnitOfWork>(UnitOfWorkScopeMode.Writing));
             }
         }
     }

@@ -6,7 +6,8 @@ namespace UnitOfWork.UnitTests
     public class DomainCustomizations : CompositeCustomization
     {
         public DomainCustomizations()
-            : base(new AutoNSubstituteCustomization())
+            : base(new AutoNSubstituteCustomization(),
+                   new UnitofWorkFactoryCustomization())
         { }
     }
 }

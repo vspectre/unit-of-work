@@ -3,7 +3,7 @@
 namespace UnitOfWork
 {
     public class UnitOfWorkScope<TUnitOfWork> : Disposable
-        where TUnitOfWork : IUnitOfWork, new()
+        where TUnitOfWork : IUnitOfWork
     {
         [ThreadStatic]
         private static ScopedUnitOfWork _scopedUnitOfWork;
@@ -17,7 +17,6 @@ namespace UnitOfWork
                 return _scopedUnitOfWork.UnitOfWork;
             }
         }
-
         
         public UnitOfWorkScope(UnitOfWorkScopeMode mode)
         {
@@ -27,12 +26,14 @@ namespace UnitOfWork
                 _isRoot = true;
                 _scopedUnitOfWork = new ScopedUnitOfWork(mode == UnitOfWorkScopeMode.Writing);
             }
+            else if (mode == UnitOfWorkScopeMode.Writing && !_scopedUnitOfWork.ForWriting)
+                throw new InvalidOperationException("Cannot open a child scope for writing when the root scope is in reading mode.");
         }
 
         public void Commit()
         {
             if (_mode != UnitOfWorkScopeMode.Writing)
-                throw new InvalidOperationException(String.Format("Cannot commit for scopes in {0} mode.", UnitOfWorkScopeMode.Reading));
+                throw new InvalidOperationException("Cannot commit for scopes in reading mode.");
 
             if (!_isRoot)
                 return;
@@ -76,7 +77,7 @@ namespace UnitOfWork
             public ScopedUnitOfWork(bool forWriting)
             {
                 ForWriting = forWriting;
-                UnitOfWork = new TUnitOfWork();
+                UnitOfWork = UnitOfWorkFactory.Current.Create<TUnitOfWork>();
             }
 
             protected override void Dispose(bool disposing)
@@ -85,7 +86,7 @@ namespace UnitOfWork
                 {
                     if (UnitOfWork != null)
                     {
-                        UnitOfWork.Commiting -= null;
+                        //UnitOfWork.Commiting -= null;
 
                         var disposable = UnitOfWork as IDisposable;
                         if(disposable != null)
