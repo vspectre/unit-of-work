@@ -1,0 +1,5 @@
+C:\Users\vspectre\Documents\Visual Studio 2015\Projects\UnitOfWork\UnitOfWork\bin\Debug\UnitOfWork.dll
+C:\Users\vspectre\Documents\Visual Studio 2015\Projects\UnitOfWork\UnitOfWork\bin\Debug\UnitOfWork.pdb
+C:\Users\vspectre\Documents\Visual Studio 2015\Projects\UnitOfWork\UnitOfWork\obj\Debug\UnitOfWork.csprojResolveAssemblyReference.cache
+C:\Users\vspectre\Documents\Visual Studio 2015\Projects\UnitOfWork\UnitOfWork\obj\Debug\UnitOfWork.dll
+C:\Users\vspectre\Documents\Visual Studio 2015\Projects\UnitOfWork\UnitOfWork\obj\Debug\UnitOfWork.pdb
