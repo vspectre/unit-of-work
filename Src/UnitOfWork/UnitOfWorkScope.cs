@@ -105,7 +105,7 @@ namespace UnitOfWork
                 {
                     if (UnitOfWork != null)
                     {
-                        UnitOfWork.Commiting -= null;
+                        UnitOfWork.Commiting -= GuardAgainstDirectCommits;
 
                         var disposable = UnitOfWork as IDisposable;
                         if(disposable != null)
