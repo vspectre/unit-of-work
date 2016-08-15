@@ -5,6 +5,7 @@ namespace UnitOfWork
     public interface IUnitOfWork
     {
         void Commit();
-        //event EventHandler Commiting;
+
+        event EventHandler<EventArgs> Commiting;
     }
 }

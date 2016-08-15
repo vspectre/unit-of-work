@@ -7,6 +7,7 @@ namespace UnitOfWork.UnitTests
     {
         public DomainCustomizations()
             : base(new AutoNSubstituteCustomization(),
+                   new UnitOfWorkCustomization(),
                    new UnitofWorkFactoryCustomization())
         { }
     }

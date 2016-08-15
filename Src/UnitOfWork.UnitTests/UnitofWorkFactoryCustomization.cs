@@ -13,9 +13,10 @@ namespace UnitOfWork.UnitTests
     {
         public void Customize(IFixture fixture)
         {
-            var uow = fixture.Freeze<IUnitOfWork>();
+            var unitOfWork = fixture.Freeze<IUnitOfWork>();
+            
             var uowFactory = Substitute.ForPartsOf<UnitOfWorkFactory>();
-            uowFactory.Create<IUnitOfWork>().Returns(uow);
+            uowFactory.Create<IUnitOfWork>().Returns(unitOfWork);
             UnitOfWorkFactory.Current = uowFactory;
         }
     }

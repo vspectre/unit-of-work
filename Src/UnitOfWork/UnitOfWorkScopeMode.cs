@@ -2,7 +2,7 @@
 {
     public enum UnitOfWorkScopeMode
     {
-        Writing,
-        Reading
+        Reading = 0,
+        Writing
     }
 }

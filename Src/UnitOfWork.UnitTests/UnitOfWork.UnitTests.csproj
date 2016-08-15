@@ -94,6 +94,7 @@
     <Compile Include="AutoDomainDataAttribute.cs" />
     <Compile Include="DomainCustomizations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitOfWorkCustomization.cs" />
     <Compile Include="UnitofWorkFactoryCustomization.cs" />
     <Compile Include="UnitOfWorkScopeTests.cs" />
   </ItemGroup>
