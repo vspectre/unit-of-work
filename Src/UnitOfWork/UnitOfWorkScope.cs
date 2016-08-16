@@ -18,14 +18,18 @@ namespace UnitOfWork
                 return _scopedUnitOfWork.UnitOfWork;
             }
         }
-        
+
         public UnitOfWorkScope(UnitOfWorkScopeMode mode)
+            : this(mode, UnitOfWorkFactory.Current)
+        { }
+        
+        public UnitOfWorkScope(UnitOfWorkScopeMode mode, UnitOfWorkFactory factory)
         {
             _mode = mode;
             if (_scopedUnitOfWork == null)
             {
                 _isRoot = true;
-                _scopedUnitOfWork = new ScopedUnitOfWork(mode == UnitOfWorkScopeMode.Writing);
+                _scopedUnitOfWork = new ScopedUnitOfWork(mode == UnitOfWorkScopeMode.Writing, factory.Create<TUnitOfWork>());
             }
             else if (mode == UnitOfWorkScopeMode.Writing && !_scopedUnitOfWork.ForWriting)
                 throw new InvalidOperationException("Cannot open a child scope for writing when the root scope is in reading mode.");
@@ -84,10 +88,13 @@ namespace UnitOfWork
             public bool AllowCommit { get; internal set; }
             public bool BlockCommit { get; internal set; }
 
-            public ScopedUnitOfWork(bool forWriting)
+            public ScopedUnitOfWork(bool forWriting, TUnitOfWork unitOfWork)
             {
+                if (unitOfWork == null)
+                    throw new ArgumentNullException("unitOfWork");
+
                 ForWriting = forWriting;
-                UnitOfWork = UnitOfWorkFactory.Current.Create<TUnitOfWork>();
+                UnitOfWork = unitOfWork;
                 UnitOfWork.Commiting += GuardAgainstDirectCommits;
             }
 

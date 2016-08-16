@@ -100,5 +100,27 @@ namespace UnitOfWork.UnitTests
 
             uow.Received(1).Commit();
         }
+
+        [Fact]
+        public void UnitOfWorkFactoryPassedDoesNotChangeCurrentContext()
+        {
+            var factory = Substitute.For<UnitOfWorkFactory>();
+            factory.Create<IUnitOfWork>().Returns(Substitute.For<IUnitOfWork>());
+            using (var sut = new UnitOfWorkScope<IUnitOfWork>(UnitOfWorkScopeMode.Reading, factory))
+            { }
+
+            Assert.NotEqual(factory, UnitOfWorkFactory.Current);
+        }
+
+        [Fact]
+        public void ScopeUsesFactoryPassed()
+        {
+            var factory = Substitute.For<UnitOfWorkFactory>();
+            factory.Create<IUnitOfWork>().Returns(Substitute.For<IUnitOfWork>());
+            using (var sut = new UnitOfWorkScope<IUnitOfWork>(UnitOfWorkScopeMode.Reading, factory))
+            { }
+
+            factory.Received().Create<IUnitOfWork>();
+        }
     }
 }
